@@ -45,28 +45,28 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-//#define USE_BASE      // Enable the base controller code
-#undef USE_BASE     // Disable the base controller code
+#define USE_BASE      // Enable the base controller code
+//#undef USE_BASE     // Disable the base controller code
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
    /* The Pololu VNH5019 dual motor driver shield */
-   #define POLOLU_VNH5019
+   //#define POLOLU_VNH5019
 
    /* The Pololu MC33926 dual motor driver shield */
    //#define POLOLU_MC33926
 
    /* The RoboGaia encoder shield */
-   #define ROBOGAIA
+   //#define ROBOGAIA
    
    /* Encoders directly attached to Arduino board */
    //#define ARDUINO_ENC_COUNTER
 
     /* Encoders attached to a STM32 board */
-   //#define STM32_ENCODER
+   #define STM32_ENCODER
 
    /* L298 Motor driver*/
-   //#define L298_MOTOR_DRIVER
+   #define L298_MOTOR_DRIVER
 #endif
 
 #define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
