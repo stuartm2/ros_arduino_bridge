@@ -122,7 +122,7 @@
 
 // A pair of varibles to help parse serial commands (thanks Fergs)
 int arg = 0;
-int index = 0;
+int ind = 0;
 
 // Variable to hold an input character
 char chr;
@@ -146,7 +146,7 @@ void resetCommand() {
   arg1 = 0;
   arg2 = 0;
   arg = 0;
-  index = 0;
+  ind = 0;
 }
 
 /* Run a command.  Commands are defined in commands.h */
@@ -292,8 +292,8 @@ void loop() {
 
     // Terminate a command with a CR
     if (chr == 13) {
-      if (arg == 1) argv1[index] = NULL;
-      else if (arg == 2) argv2[index] = NULL;
+      if (arg == 1) argv1[ind] = NULL;
+      else if (arg == 2) argv2[ind] = NULL;
       runCommand();
       resetCommand();
     }
@@ -302,9 +302,9 @@ void loop() {
       // Step through the arguments
       if (arg == 0) arg = 1;
       else if (arg == 1)  {
-        argv1[index] = NULL;
+        argv1[ind] = NULL;
         arg = 2;
-        index = 0;
+        ind = 0;
       }
       continue;
     }
@@ -315,12 +315,12 @@ void loop() {
       }
       else if (arg == 1) {
         // Subsequent arguments can be more than one character
-        argv1[index] = chr;
-        index++;
+        argv1[ind] = chr;
+        ind++;
       }
       else if (arg == 2) {
-        argv2[index] = chr;
-        index++;
+        argv2[ind] = chr;
+        ind++;
       }
     }
   }
