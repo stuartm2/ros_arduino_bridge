@@ -68,6 +68,108 @@
       return;
     }
   }
+#elif defined STM32_ENCODER
+  // Borrowed from https://playground.arduino.cc/Main/RotaryEncoders#Example5
+  volatile unsigned int encoder0Pos = 0;
+  volatile unsigned int encoder1Pos = 0;
+
+  boolean A0_set;
+  boolean B0_set;
+
+  boolean A1_set;
+  boolean B1_set;
+
+  // Interrupt on A changing state
+  void doEncoder0A() {
+    // Low to High transition?
+    if (digitalRead(encoder0PinA) == HIGH) {
+      A0_set = true;
+      if (!B0_set) {
+        encoder0Pos = encoder0Pos - 1;
+      }
+    }
+
+    // High-to-low transition?
+    if (digitalRead(encoder0PinA) == LOW) {
+      A0_set = false;
+    }
+  }
+
+  // Interrupt on A changing state
+  void doEncoder1A() {
+    // Low to High transition?
+    if (digitalRead(encoder1PinA) == HIGH) {
+      A1_set = true;
+      if (!B1_set) {
+        encoder1Pos = encoder1Pos - 1;
+      }
+    }
+
+    // High-to-low transition?
+    if (digitalRead(encoder1PinA) == LOW) {
+      A1_set = false;
+    }
+  }
+
+  // Interrupt on B changing state
+  void doEncoder0B() {
+    // Low-to-high transition?
+    if (digitalRead(encoder0PinB) == HIGH) {
+      B0_set = true;
+      if (!A0_set) {
+        encoder0Pos = encoder0Pos + 1;
+      }
+    }
+
+    // High-to-low transition?
+    if (digitalRead(encoder0PinB) == LOW) {
+      B0_set = false;
+    }
+  }
+
+  // Interrupt on B changing state
+  void doEncoder1B() {
+    // Low-to-high transition?
+    if (digitalRead(encoder1PinB) == HIGH) {
+      B1_set = true;
+      if (!A1_set) {
+        encoder1Pos = encoder1Pos + 1;
+      }
+    }
+
+    // High-to-low transition?
+    if (digitalRead(encoder1PinB) == LOW) {
+      B1_set = false;
+    }
+  }
+
+  void initEncoders() {
+    pinMode(encoder0PinA, INPUT);
+    pinMode(encoder0PinB, INPUT);
+    pinMode(encoder1PinA, INPUT);
+    pinMode(encoder1PinB, INPUT);
+
+    attachInterrupt(encoder0PinA, doEncoder0A, CHANGE);
+    attachInterrupt(encoder0PinB, doEncoder0B, CHANGE);
+    attachInterrupt(encoder1PinA, doEncoder1A, CHANGE);
+    attachInterrupt(encoder1PinB, doEncoder1B, CHANGE);
+  }
+
+  long readEncoder(int i) {
+    if (i == LEFT) {
+      return encoder0Pos;
+    } else {
+      return encoder1Pos;
+    }
+  }
+
+  void resetEncoder(int i) {
+    if (i == LEFT) {
+      encoder0Pos = 0;
+    } else {
+      encoder1Pos = 0;
+    }
+  }
 #else
   #error A encoder driver must be selected!
 #endif

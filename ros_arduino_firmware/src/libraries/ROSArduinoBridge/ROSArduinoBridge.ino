@@ -62,6 +62,9 @@
    /* Encoders directly attached to Arduino board */
    //#define ARDUINO_ENC_COUNTER
 
+    /* Encoders attached to a STM32 board */
+   //#define STM32_ENCODER
+
    /* L298 Motor driver*/
    //#define L298_MOTOR_DRIVER
 #endif
@@ -263,6 +266,8 @@ void setup() {
     
     // enable PCINT1 and PCINT2 interrupt in the general interrupt mask
     PCICR |= (1 << PCIE1) | (1 << PCIE2);
+  #elif defined STM32_ENCODER
+    initEncoders();
   #endif
   initMotorController();
   resetPID();
