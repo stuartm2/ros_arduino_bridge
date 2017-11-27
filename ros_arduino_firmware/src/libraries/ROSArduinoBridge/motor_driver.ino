@@ -57,29 +57,44 @@
   }
 #elif defined L298_MOTOR_DRIVER
   void initMotorController() {
-    digitalWrite(RIGHT_MOTOR_ENABLE, HIGH);
-    digitalWrite(LEFT_MOTOR_ENABLE, HIGH);
+    pinMode(LEFT_MOTOR_FORWARD, OUTPUT);
+    pinMode(LEFT_MOTOR_BACKWARD, OUTPUT);
+    pinMode(RIGHT_MOTOR_FORWARD, OUTPUT);
+    pinMode(RIGHT_MOTOR_BACKWARD, OUTPUT);
+    pinMode(LEFT_MOTOR_ENABLE, OUTPUT);
+    pinMode(RIGHT_MOTOR_ENABLE, OUTPUT);
+
+    digitalWrite(LEFT_MOTOR_FORWARD, LOW);
+    digitalWrite(RIGHT_MOTOR_FORWARD, LOW);
+    digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
+    digitalWrite(RIGHT_MOTOR_BACKWARD, LOW);
+    analogWrite(LEFT_MOTOR_ENABLE, 0);
+    analogWrite(RIGHT_MOTOR_ENABLE, 0);
   }
   
   void setMotorSpeed(int i, int spd) {
-    unsigned char reverse = 0;
-  
-    if (spd < 0)
-    {
-      spd = -spd;
-      reverse = 1;
+    int fwdPin = LEFT_MOTOR_FORWARD;
+    int backPin = LEFT_MOTOR_BACKWARD;
+    int enPin = LEFT_MOTOR_ENABLE;
+
+    if (i == RIGHT) {
+      fwdPin = RIGHT_MOTOR_FORWARD;
+      backPin = RIGHT_MOTOR_BACKWARD;
+      enPin = RIGHT_MOTOR_ENABLE;
     }
-    if (spd > 255)
-      spd = 255;
-    
-    if (i == LEFT) { 
-      if      (reverse == 0) { analogWrite(RIGHT_MOTOR_FORWARD, spd); analogWrite(RIGHT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(RIGHT_MOTOR_BACKWARD, spd); analogWrite(RIGHT_MOTOR_FORWARD, 0); }
+
+    if (spd < 0) { // Backwards
+      digitalWrite(fwdPin, LOW);
+      digitalWrite(backPin, HIGH);
+    } else if (spd > 0) { // Forwards
+      digitalWrite(fwdPin, HIGH);
+      digitalWrite(backPin, LOW);
+    } else { // Stop
+      digitalWrite(fwdPin, LOW);
+      digitalWrite(backPin, LOW);
     }
-    else /*if (i == RIGHT) //no need for condition*/ {
-      if      (reverse == 0) { analogWrite(LEFT_MOTOR_FORWARD, spd); analogWrite(LEFT_MOTOR_BACKWARD, 0); }
-      else if (reverse == 1) { analogWrite(LEFT_MOTOR_BACKWARD, spd); analogWrite(LEFT_MOTOR_FORWARD, 0); }
-    }
+
+    analogWrite(enPin, abs(spd));
   }
   
   void setMotorSpeeds(int leftSpeed, int rightSpeed) {
